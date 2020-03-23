@@ -1,0 +1,32 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+header{
+    position: absolute;
+    height: 60px;
+    background-color: rgb(68, 68, 68);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+input, button {
+    border: none;
+}
+
+.search-bar input {
+    padding: 10px;
+    border-radius: 5px;
+    width: 500px;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.search-bar button {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
