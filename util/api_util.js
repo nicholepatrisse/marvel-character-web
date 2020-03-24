@@ -1,5 +1,9 @@
 const $ = require("jQuery");
 const MD5 = require("crypto-js/md5");
+const config = {
+    privateKey: "680747c71381930a32b071c07a8a55d07a874bcb",
+    publicKey: "af11c90b361c0c84785f26a81c8b450f"
+};
 let timestamp = Date.now();
 let hash = MD5(timestamp + config.privateKey + config.publicKey);
 
