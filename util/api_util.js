@@ -7,8 +7,7 @@ let hash = MD5(timestamp + privateKey + publicKey);
 
 const getCharacters = queryString =>
   $.ajax({
-    // url: `http://cors-anywhere.herokuapp.com/https://gateway.marvel.com:443/v1/public/characters?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&nameStartsWith=${queryString}`
-    url: `http://cors-anywhere.herokuapp.com/https://gateway.marvel.com:443/v1/public/characters?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&nameStartsWith=${queryString}:443`
+    url: `https://cors-anywhere.herokuapp.com/https://gateway.marvel.com:443/v1/public/characters?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&nameStartsWith=${queryString}`
   });
 
 const getStories = () => (
@@ -22,7 +21,7 @@ const getStories = () => (
 
 const getRelated = resourceURI =>
   $.ajax({
-    url: `http://cors-anywhere.herokuapp.com/${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}`,
+    url: `https://cors-anywhere.herokuapp.com/${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}`,
   });
 
 module.exports = {
