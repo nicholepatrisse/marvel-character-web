@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="main.js"></script>
+    <script src="../config.js"></script>
+    <script src="main.js" defer></script>
     
     <link rel="stylesheet" href="./css/reset.css">
     <link rel="stylesheet" href="./css/stylesheet.css">
@@ -11,14 +12,15 @@
 </head>
 <body>
     <header>
-        <div class="search-bar">
+        <div id="search-bar">
             <input 
+                id="search-input"
                 type="text"
                 placeholder="Enter your favorite character or story."   
             />
             <button>Let's Go</button>
         </div>
-        <div id="results"></div>
+        <div id="search-results"></div>
     </header>
     <canvas></canvas>
 </body>
