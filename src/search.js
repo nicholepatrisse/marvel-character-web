@@ -27,6 +27,7 @@ const showResults = async() => {
         ).forEach(character => {
             const li = document.createElement('li');
             li.classList.add('search-result-item');
+            li.id = character.id;
 
             const img = document.createElement('img');
             img.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
@@ -42,6 +43,10 @@ const showResults = async() => {
             div.appendChild(stories);
             li.appendChild(div);
             
+            li.addEventListener('click', e => {
+                console.log(e.currentTarget.id)
+                // Create function to lookup character and add them to the canvas
+            });
             ul.appendChild(li);
         });
         searchResults.appendChild(ul);

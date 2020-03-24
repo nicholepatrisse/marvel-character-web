@@ -38,6 +38,7 @@ body {
     padding: 10px;
     cursor: pointer;
     display: flex;
+    align-items: center;
 }
 
 .search-result-item:hover {
@@ -59,6 +60,7 @@ body {
     object-fit: cover;
     margin-right: 10px;
     transition: 1s;
+    border-radius: 100px;
 }
 
 .search-result-item:hover img {
@@ -73,5 +75,5 @@ body {
 
 .search-result-item:hover .story-count {
     display: block;
-    height: 40px;
+    /* height: 40px; */
 }
