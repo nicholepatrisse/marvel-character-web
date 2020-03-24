@@ -11,29 +11,26 @@ const getCharacters = () => (
         headers: {
             ts: Date.now(),
         },
-        xhrFields: {
-                withCredentials: true
-        },
     })
 );
 
 const getStories = () => (
     $.ajax({
-        url: `https://gateway.marvel.com:443/v1/public/stories?apikey=${publicKey}`,
+        url: `https://gateway.marvel.com:443/v1/public/stories?apikey=${publicKey}&ts=${timestamp}&hash=${hash}`,
         headers: {
-            ts: Date.now(),
-        }
+            ts: Date.now()
+        },
     })
-)
+);
 
 const getRelated = resourceURI => (
     $.ajax({
-        url: `${resourceURI}?apikey=${publicKey}`,
+        url: `${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}`,
         headers: {
-            ts: Date.now(),
+            ts: Date.now()
         }
     })
-)
+);
 
 module.exports = {
     getCharacters,
