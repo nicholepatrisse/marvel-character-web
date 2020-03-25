@@ -1,4 +1,5 @@
 const getCharacters = require('../util/api_util').getCharacters;
+const buildBubbles = require('./bubbles')
 // const getStories = require('../util/api_util').getStories;
 
 const searchInput = document.getElementById('search-input');
@@ -27,7 +28,7 @@ const showResults = async() => {
         ).forEach(character => {
             const li = document.createElement('li');
             li.classList.add('search-result-item');
-            li.id = character.id;
+            li.id = character.resourceURI;
 
             const img = document.createElement('img');
             img.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
@@ -45,7 +46,9 @@ const showResults = async() => {
             
             li.addEventListener('click', e => {
                 console.log(e.currentTarget.id)
-                // Create function to lookup character and add them to the canvas
+                buildBubbles(e.currentTarget.id)
+                searchInput.value = '';
+                searchResults.innerHTML = "";
             });
             ul.appendChild(li);
         });

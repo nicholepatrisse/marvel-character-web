@@ -5,10 +5,11 @@ const publicKey = "af11c90b361c0c84785f26a81c8b450f";
 let timestamp = Date.now();
 let hash = MD5(timestamp + privateKey + publicKey);
 
-const getCharacters = queryString =>
+const getCharacters = queryString => (
   $.ajax({
     url: `https://cors-anywhere.herokuapp.com/https://gateway.marvel.com:443/v1/public/characters?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&nameStartsWith=${queryString}`
-  });
+  })
+);
 
 const getStories = () => (
     $.ajax({
@@ -19,10 +20,11 @@ const getStories = () => (
     })
 );
 
-const getRelated = resourceURI =>
+const getRelated = resourceURI => (
   $.ajax({
     url: `https://cors-anywhere.herokuapp.com/${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}`,
-  });
+  })
+);
 
 module.exports = {
     getCharacters,
