@@ -30,7 +30,8 @@ const fetchStories = async(character) => {
 };
 
 const svg = d3.select('#chart');
-const rScale = d3.scaleLinear().range([10, 50])
+const g = svg.append('g').attr('transform', 'translate(100, 100)')
+const rScale = d3.scaleLog().range([5, 25])
 const color = d3.scaleOrdinal(d3.schemePaired)
 
 const renderCharacterBubbles = () => {
@@ -43,7 +44,7 @@ const renderCharacterBubbles = () => {
     };
     color.domain(nodes.map(character => character.id))
 
-    let bubbles = svg.selectAll('.bubble').data(nodes)
+    let bubbles = g.selectAll('.bubble').data(nodes)
     bubbles.enter().append('circle')
             .attr('cx', Math.random() * 500)
             .attr('cy', Math.random() * 500)
