@@ -1,9 +1,7 @@
 import { getRelated } from './api_util';
-import { drawGraph } from '../src/graph';
+import { drawGraph, nodes } from '../src/graph';
 
 const data = {};
-const nodes = [];
-
 export const fetchCharacter = async (resouceURI) => {
     await getRelated(resouceURI).then(async (res) => {
         let character = res['data']["results"][0]

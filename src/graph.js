@@ -7,12 +7,20 @@ import {
     scaleBand
 } from 'd3'
 
-const width = 800;
-const height = 600;
+export const nodes = [];
+
+let width = document.querySelector('.chart-area').offsetWidth;
+let height = document.querySelector('.chart-area').offsetHeight;
 
 const svg = select('svg')
-svg.style('border', '1px solid lightgray')
-svg.attr('height', height).attr('width', width)
+svg.attr('width', width).attr('height', height)
+
+window.addEventListener('resize', () => {
+    width = document.querySelector('.chart-area').offsetWidth;
+    height = document.querySelector('.chart-area').offsetHeight;
+    svg.attr('width', width).attr('height', height);
+    drawGraph(nodes)
+});
 
 function render(data) {
     const comicCount = d => d.comics.available;
