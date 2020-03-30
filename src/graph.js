@@ -4,10 +4,12 @@ import {
     scaleOrdinal, 
     schemeCategory10,
     max,
-    scaleBand
+    scaleBand,
+    json
 } from 'd3'
+import { buildRelatedUrl } from '../util/api_util';
 
-export const nodes = [];
+const nodes = [];
 
 let width = document.querySelector('.chart-area').offsetWidth;
 let height = document.querySelector('.chart-area').offsetHeight;
@@ -19,8 +21,13 @@ window.addEventListener('resize', () => {
     width = document.querySelector('.chart-area').offsetWidth;
     height = document.querySelector('.chart-area').offsetHeight;
     svg.attr('width', width).attr('height', height);
-    drawGraph(nodes)
+    resizeGraph()
 });
+
+const resizeGraph = () => {
+    svg.select('g').remove();
+    render(nodes)
+};
 
 function render(data) {
     const comicCount = d => d.comics.available;
@@ -33,7 +40,7 @@ function render(data) {
 
     const rScale = scaleLinear()
         .domain([1, max(data, d => comicCount(d))])
-        .range([10, 25])
+        .range([10, 50])
 
     const colorScale = scaleOrdinal(schemeCategory10);
 
@@ -52,8 +59,18 @@ function render(data) {
         .attr('fill', d => colorScale(charName(d)))
 };
 
-export const drawGraph = data => {
-    console.log(data)
-    svg.select('g').remove();
-    render(data)
+const store = {};
+const formatCharacterData = data => {
+    let character = data['data']["results"][0]
+    store[character.id] = character;
+    nodes.push(store[character.id]);
+    console.log(nodes);
+};
+
+export const fetchCharacter = resourceURI => {
+    json(buildRelatedUrl(resourceURI)).then(data => {
+        svg.select('g').remove();
+        formatCharacterData(data)
+        render(nodes)
+    });
 };

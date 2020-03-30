@@ -1,4 +1,4 @@
-import { fetchCharacter } from '../util/graph_builder';
+import { fetchCharacter } from './graph';
 import { getCharacters } from '../util/api_util';
 
 const searchInput = document.getElementById('search-input');
@@ -14,7 +14,6 @@ const fetchCharacters = async() => {
 };
 
 const handleClick = e => {
-    // buildBubbles(e.currentTarget.id)
     fetchCharacter(e.currentTarget.id);
     searchInput.value = '';
     searchResults.innerHTML = "";
@@ -71,6 +70,5 @@ const showResults = async() => {
 
 searchInput.addEventListener('input', e => {
     searchTerm = e.target.value;
-    console.log(searchTerm);
     showResults()
 });
