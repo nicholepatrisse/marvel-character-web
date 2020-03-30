@@ -1,6 +1,5 @@
-const getCharacters = require('../util/api_util').getCharacters;
-const buildBubbles = require('./bubbles')
-// const getStories = require('../util/api_util').getStories;
+import { fetchCharacter } from '../util/graph_builder';
+import { getCharacters } from '../util/api_util';
 
 const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
@@ -11,9 +10,46 @@ let characters;
 const fetchCharacters = async() => {
     await getCharacters(searchTerm).then(res => {
         characters = res['data']['results']
-        console.log(characters);
     });
-}
+};
+
+const handleClick = e => {
+    // buildBubbles(e.currentTarget.id)
+    fetchCharacter(e.currentTarget.id);
+    searchInput.value = '';
+    searchResults.innerHTML = "";
+};
+
+const addCharacterInfo = character => {
+    const div = document.createElement('div')
+
+    const h1 = document.createElement('h1')
+    h1.innerText = character.name;
+    div.appendChild(h1);
+
+    const comics = document.createElement('div')
+    comics.classList.add('story-count')
+    comics.innerText += `${character.comics.available} Comics`
+    div.appendChild(comics);
+
+    return div;
+};
+
+const buildListItem = character => {
+    const li = document.createElement('li');
+    li.classList.add('search-result-item');
+    li.id = character.resourceURI;
+    
+    const img = document.createElement('img');
+    img.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
+    li.appendChild(img);
+    
+    const div = addCharacterInfo(character);
+    li.appendChild(div);
+    
+    li.addEventListener('click', handleClick);
+    return li;
+};
 
 const showResults = async() => {
     searchResults.innerHTML = '';
@@ -24,32 +60,9 @@ const showResults = async() => {
         characters.filter(character => 
             (character.name.toLowerCase()
             .includes(searchTerm.toLowerCase()) &&
-            character.stories.available > 0)
+            character.comics.available > 0)
         ).forEach(character => {
-            const li = document.createElement('li');
-            li.classList.add('search-result-item');
-            li.id = character.resourceURI;
-
-            const img = document.createElement('img');
-            img.src = `${character.thumbnail.path}.${character.thumbnail.extension}`;
-            li.appendChild(img);
-
-            const div = document.createElement('div')
-            const h1 = document.createElement('h1')
-            h1.innerText = character.name;
-            div.appendChild(h1);
-            const stories = document.createElement('div')
-            stories.classList.add('story-count')
-            stories.innerText += `${character.stories.available} Stories`
-            div.appendChild(stories);
-            li.appendChild(div);
-            
-            li.addEventListener('click', e => {
-                console.log(e.currentTarget.id)
-                buildBubbles(e.currentTarget.id)
-                searchInput.value = '';
-                searchResults.innerHTML = "";
-            });
+            let li = buildListItem(character);
             ul.appendChild(li);
         });
         searchResults.appendChild(ul);
@@ -58,5 +71,6 @@ const showResults = async() => {
 
 searchInput.addEventListener('input', e => {
     searchTerm = e.target.value;
+    console.log(searchTerm);
     showResults()
 });
