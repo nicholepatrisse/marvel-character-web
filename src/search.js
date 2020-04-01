@@ -17,6 +17,7 @@ const fetchCharacters = async() => {
 };
 
 const showErrorMessage = () => {
+    errors.innerText = '';
     let errors = document.getElementById('errors');
     let gif = document.createElement('img');
     gif.src = 'https://media1.giphy.com/media/M9TuBZs3LIQz6/giphy.gif?cid=ecf05e47f347ee95b4ed2e0246bc780fc82d4932e9dd7c55&rid=giphy.gif'
@@ -25,7 +26,7 @@ const showErrorMessage = () => {
     text.innerText = 'Oops, something went wrong.';
     errors.appendChild(text)
     errors.classList.add('display-errors')
-}
+};
 
 const handleClick = e => {
     fetchCharacter(e.currentTarget.id);

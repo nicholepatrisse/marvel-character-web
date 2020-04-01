@@ -17,5 +17,5 @@ export const buildRelatedUrl = resourceURI => (
 );
 
 export const buildOffsetUrl = (resourceURI, offset) => (
-  `https://cors-anywhere.herokuapp.com/${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&offset=${offset}&limit=100`
+  `https://cors-anywhere.herokuapp.com/${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&offset=${offset}&limit=50`
 );

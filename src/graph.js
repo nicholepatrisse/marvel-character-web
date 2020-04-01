@@ -52,15 +52,20 @@ function render() {
         .force('forceY', forceY().strength(1).y(innerHeight / 2))
         .force('link', forceLink(graph.links)
             .id(d => d.id)
-            .distance(75)
+            .distance(60)
             .strength(1)
         );
     graphLayout.stop()
 
-    const bubbleSize = d => d.type === 'character' ? d.comics.available : 1;
+    const characterRadius = d => d.type === 'character' ? d.comics.available : 1;
     const rScale = scaleLinear()
-        .domain([1, max(graph.nodes, d => bubbleSize(d))])
-        .range([10, 30])
+        .domain([1, max(graph.nodes, d => characterRadius(d))])
+        .range([10, 30]);
+    const sizeBubble = d => {
+        let size = 5;
+        if (d.type === 'character') size = rScale(characterRadius(d));
+        return size;
+    };
 
     const colorId = d => d.type === 'character' ? d.id : 1;
     const colorScale = scaleOrdinal(schemeCategory10);
@@ -78,7 +83,7 @@ function render() {
             .enter().append('circle')
             .attr('cx', d => d.x)
             .attr('cy', d => d.y)
-            .attr('r', d => rScale(bubbleSize(d)))
+            .attr('r', d => sizeBubble(d))
             .attr('fill', d => colorScale(colorId(d)))
 
     graphLayout.on('tick', d => {
@@ -125,36 +130,14 @@ const formatComicData = (comics, characterId) => {
     graph['nodes'] = Object.values(store);
 };
 
-const fetchComics = (collectionURI, comicNum, characterId) => {
-    let offset = 0;
-    while (offset < comicNum) {
-        json(buildOffsetUrl(collectionURI, offset)).then(data => {
-            let comics = data['data']['results']
-            formatComicData(comics, characterId)
-            console.log(`offset: ${offset}, comics: ${comicNum}`)
-            svg.select('g').remove();
-            render();
-        });
-        offset += 100;
-    };
-};
-
-// const fetch100Comics = async(collectionURI, characterId, offset) => {
-//     await json(buildOffsetUrl(collectionURI, offset)).then(data => {
-//         let comics = data['data']['results']
-//         formatComicData(comics, characterId)
-//     });
-// };
-
-// const processComics = async(collectionURI, comicsAvailable, characterId) => {
-//     let offset = 0;
-//     while (offset < comicsAvailable) {
-//         await fetch100Comics(collectionURI, characterId, offset)
-//     };
-//     console.log(graph);
-//     svg.select('g').remove();
-//     render();
-// };
+const fetch100Comics = (collectionURI, characterId) => {
+    json(buildOffsetUrl(collectionURI, 0)).then(data => {
+        let comics = data['data']['results']
+        formatComicData(comics, characterId)
+        console.log(`API Called`)
+        render();
+    });
+}
 
 export const fetchCharacter = async (resourceURI) => {
     await json(buildRelatedUrl(resourceURI)).then(data => {
@@ -163,7 +146,6 @@ export const fetchCharacter = async (resourceURI) => {
         formatCharacterData(character)
         let collectionURI = character['comics']['collectionURI'];
         let comicsAvailable = character['comics']['available'];
-        fetchComics(collectionURI, comicsAvailable, character.id);
-        // processComics(collectionURI, comicsAvailable, character.id);
+        fetch100Comics(collectionURI, character.id);
     }).catch(error => console.log(error));
 };
