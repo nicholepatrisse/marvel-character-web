@@ -5,13 +5,27 @@ const searchInput = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
 
 let searchTerm = '';
-let characters;
+let characters = [];
 
 const fetchCharacters = async() => {
     await getCharacters(searchTerm).then(res => {
         characters = res['data']['results']
+    }).catch(err => {
+        showErrorMessage()
+        console.log(err.responseJSON);
     });
 };
+
+const showErrorMessage = () => {
+    let errors = document.getElementById('errors');
+    let gif = document.createElement('img');
+    gif.src = 'https://media1.giphy.com/media/M9TuBZs3LIQz6/giphy.gif?cid=ecf05e47f347ee95b4ed2e0246bc780fc82d4932e9dd7c55&rid=giphy.gif'
+    errors.appendChild(gif)
+    let text = document.createElement('div');
+    text.innerText = 'Oops, something went wrong.';
+    errors.appendChild(text)
+    errors.classList.add('display-errors')
+}
 
 const handleClick = e => {
     fetchCharacter(e.currentTarget.id);
@@ -69,6 +83,7 @@ const showResults = async() => {
 };
 
 searchInput.addEventListener('input', e => {
+    errors.innerText = '';
     searchTerm = e.target.value;
     showResults()
 });

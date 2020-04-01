@@ -15,3 +15,7 @@ export const getCharacters = queryString => (
 export const buildRelatedUrl = resourceURI => (
   `https://cors-anywhere.herokuapp.com/${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}`
 );
+
+export const buildOffsetUrl = (resourceURI, offset) => (
+  `https://cors-anywhere.herokuapp.com/${resourceURI}?apikey=${publicKey}&ts=${timestamp}&hash=${hash}&offset=${offset}&limit=100`
+);

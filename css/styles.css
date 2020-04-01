@@ -85,3 +85,37 @@ body {
     bottom: 0;
     width: 100%;
 }
+
+#errors {
+    position: absolute;
+    z-index: 5;
+    background-color: white;
+    top: 90px;
+    width: 100%;
+    text-align: center;
+}
+
+#errors img {
+    width: 350px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 500px;
+    margin-bottom: 20px;
+}
+
+.copyright {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 3;
+    font-size: 11px;
+    background-color: rgb(85, 85, 85);
+    width: 100%;
+    color: rgb(212, 212, 212);
+    padding: 5px 10px;
+    text-align: right;
+}
+
+.copyright a {
+    color: rgb(231, 46, 46);
+}
