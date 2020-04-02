@@ -130,13 +130,23 @@ const formatComicData = (comics, characterId) => {
     graph['nodes'] = Object.values(store);
 };
 
-const fetch100Comics = (collectionURI, characterId) => {
-    json(buildOffsetUrl(collectionURI, 0)).then(data => {
+const fetch100Comics = async(collectionURI, characterId) => {
+    return json(buildOffsetUrl(collectionURI, 0)).then(data => {
         let comics = data['data']['results']
         formatComicData(comics, characterId)
         console.log(`API Called`)
-        render();
+        // render();
     });
+}
+
+const fetchAllComics = (collectionURI, characterId, comicsAvailable) => {
+    let offset = 0;
+    let allComics = [];
+    while (offset < comicsAvailable) {
+        allComics.push(fetch100Comics(collectionURI, characterId))
+        offset += 100
+    }
+    Promise.all(allComics).then(() => render())
 }
 
 export const fetchCharacter = async (resourceURI) => {
@@ -146,6 +156,7 @@ export const fetchCharacter = async (resourceURI) => {
         formatCharacterData(character)
         let collectionURI = character['comics']['collectionURI'];
         let comicsAvailable = character['comics']['available'];
-        fetch100Comics(collectionURI, character.id);
+        // fetch100Comics(collectionURI, character.id);
+        fetchAllComics(collectionURI, character.id, comicsAvailable)
     }).catch(error => console.log(error));
 };
