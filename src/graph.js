@@ -38,6 +38,7 @@ const resizeGraph = () => {
 };
 
 function render() {
+    svg.select('g').remove();
     const margin = { top: 70, bottom: 50, left: 50, right: 50 }
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -46,21 +47,21 @@ function render() {
         .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
     const graphLayout = forceSimulation(graph.nodes)
-        .force('charge', forceManyBody().strength(-500))
+        .force('charge', forceManyBody().strength(-2000))
         .force('center', forceCenter().x(innerWidth / 2).y(innerHeight / 2))
         .force('forceX', forceX().strength(1).x(innerWidth / 2))
         .force('forceY', forceY().strength(1).y(innerHeight / 2))
         .force('link', forceLink(graph.links)
             .id(d => d.id)
-            .distance(60)
+            .distance(100)
             .strength(1)
         );
     graphLayout.stop()
 
-    const characterRadius = d => d.type === 'character' ? d.comics.available : 1;
+    const characterRadius = d => d.type === 'character' ? d.series.available : 1;
     const rScale = scaleLinear()
         .domain([1, max(graph.nodes, d => characterRadius(d))])
-        .range([10, 30]);
+        .range([5, 50]);
     const sizeBubble = d => {
         let size = 5;
         if (d.type === 'character') size = rScale(characterRadius(d));
@@ -110,53 +111,77 @@ function render() {
     }
 };
 
-const store = {};
+const store = {
+    characters: {},
+    series: {}
+};
+
 const formatCharacterData = character => {
-    store[character.id] = character;
-    store[character.id]['type'] = 'character';
-    graph['nodes'] = Object.values(store);
+    store['characters'][character.id] = character;
+    store['characters'][character.id]['type'] = 'character';
+    graph['nodes'] = Object.values(store['characters']);
 };
 
-const formatComicData = (comics, characterId) => {
-    comics.forEach(comic => {
-        store[comic.id] = comic;
-        store[comic.id]['type'] = 'comic';
-        let newLink = {
-            target: characterId,
-            source: comic.id
-        };
-        graph.links.push(newLink);
+const storeSeriesData = (series, characterId) => {
+    series.forEach(series => {
+        if (store['series'][series.id]) {
+            store['series'][series.id]['characters'][characterId] = true;
+        } else {
+            store['series'][series.id] = series;
+            store['series'][series.id]['type'] = 'series';
+            store['series'][series.id]['characters'] = {
+                [characterId]: true
+            };
+        }
     });
-    graph['nodes'] = Object.values(store);
 };
 
-const fetch100Comics = async(collectionURI, characterId) => {
-    return json(buildOffsetUrl(collectionURI, 0)).then(data => {
-        let comics = data['data']['results']
-        formatComicData(comics, characterId)
-        console.log(`API Called`)
-        // render();
-    });
+const generateLinks = () => {
+    graph.links = [];
+    let storedSeries = Object.values(store['series']);
+    storedSeries.forEach(series => {
+        let assocCharacters = Object.keys(series['characters']);
+        if (assocCharacters.length > 1) {
+            for (let i = 0; i < assocCharacters.length; i++) {
+                for (let j = i + 1; j < assocCharacters.length; j++) {
+                    let newLink = {
+                        source: assocCharacters[i],
+                        target: assocCharacters[j]
+                    };
+                    graph.links.push(newLink);
+                }
+            }
+        }
+    })
+    console.log(graph);
+    console.log(store)
 }
 
-const fetchAllComics = (collectionURI, characterId, comicsAvailable) => {
+const fetch100Series = async(collectionURI, characterId) => {
+    return json(buildOffsetUrl(collectionURI, 0)).then(data => {
+        let series = data['data']['results']
+        storeSeriesData(series, characterId)
+        console.log(`API Called`)
+        generateLinks();
+    });
+};
+
+const fetchAllSeries = (collectionURI, characterId, seriesAvailable) => {
     let offset = 0;
-    let allComics = [];
-    while (offset < comicsAvailable) {
-        allComics.push(fetch100Comics(collectionURI, characterId))
+    let allSeries = [];
+    while (offset < seriesAvailable) {
+        allSeries.push(fetch100Series(collectionURI, characterId))
         offset += 100
     }
-    Promise.all(allComics).then(() => render())
-}
+    Promise.all(allSeries).then(() => render())
+};
 
 export const fetchCharacter = async (resourceURI) => {
     await json(buildRelatedUrl(resourceURI)).then(data => {
         let character = data['data']["results"][0]
-        svg.select('g').remove();
         formatCharacterData(character)
-        let collectionURI = character['comics']['collectionURI'];
-        let comicsAvailable = character['comics']['available'];
-        // fetch100Comics(collectionURI, character.id);
-        fetchAllComics(collectionURI, character.id, comicsAvailable)
+        let collectionURI = character['series']['collectionURI'];
+        let seriesAvailable = character['series']['available'];
+        fetchAllSeries(collectionURI, character.id, seriesAvailable)
     }).catch(error => console.log(error));
 };
