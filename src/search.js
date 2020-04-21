@@ -42,8 +42,8 @@ const addCharacterInfo = character => {
     div.appendChild(h1);
 
     const comics = document.createElement('div')
-    comics.classList.add('story-count')
-    comics.innerText += `${character.comics.available} Comics`
+    comics.classList.add('series-count')
+    comics.innerText += `${character.series.available} Series`
     div.appendChild(comics);
 
     return div;
@@ -74,7 +74,7 @@ const showResults = async() => {
         characters.filter(character => 
             (character.name.toLowerCase()
             .includes(searchTerm.toLowerCase()) &&
-            character.comics.available > 0)
+            character.series.available > 0)
         ).forEach(character => {
             let li = buildListItem(character);
             ul.appendChild(li);

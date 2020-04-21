@@ -57,7 +57,7 @@ function render() {
         );
     graphLayout.stop()
 
-    const characterRadius = d => d.type === 'character' ? d.comics.available : 1;
+    const characterRadius = d => d.type === 'character' ? d.series.available : 1;
     const rScale = scaleLinear()
         .domain([1, max(graph.nodes, d => characterRadius(d))])
         .range([10, 30]);
@@ -117,46 +117,46 @@ const formatCharacterData = character => {
     graph['nodes'] = Object.values(store);
 };
 
-const formatComicData = (comics, characterId) => {
-    comics.forEach(comic => {
-        store[comic.id] = comic;
-        store[comic.id]['type'] = 'comic';
+const formatSeriesData = (series, characterId) => {
+    series.forEach(series => {
+        store[series.id] = series;
+        store[series.id]['type'] = 'series';
         let newLink = {
             target: characterId,
-            source: comic.id
+            source: series.id
         };
         graph.links.push(newLink);
     });
     graph['nodes'] = Object.values(store);
 };
 
-const fetch100Comics = async(collectionURI, characterId) => {
+const fetch100Series = async(collectionURI, characterId) => {
     return json(buildOffsetUrl(collectionURI, 0)).then(data => {
-        let comics = data['data']['results']
-        formatComicData(comics, characterId)
+        let series = data['data']['results']
+        formatSeriesData(series, characterId)
         console.log(`API Called`)
         // render();
     });
-}
+};
 
-const fetchAllComics = (collectionURI, characterId, comicsAvailable) => {
+const fetchAllSeries = (collectionURI, characterId, seriesAvailable) => {
     let offset = 0;
-    let allComics = [];
-    while (offset < comicsAvailable) {
-        allComics.push(fetch100Comics(collectionURI, characterId))
+    let allSeries = [];
+    while (offset < seriesAvailable) {
+        allSeries.push(fetch100Series(collectionURI, characterId))
         offset += 100
     }
-    Promise.all(allComics).then(() => render())
-}
+    Promise.all(allSeries).then(() => render())
+};
 
 export const fetchCharacter = async (resourceURI) => {
     await json(buildRelatedUrl(resourceURI)).then(data => {
         let character = data['data']["results"][0]
         svg.select('g').remove();
         formatCharacterData(character)
-        let collectionURI = character['comics']['collectionURI'];
-        let comicsAvailable = character['comics']['available'];
-        // fetch100Comics(collectionURI, character.id);
-        fetchAllComics(collectionURI, character.id, comicsAvailable)
+        let collectionURI = character['series']['collectionURI'];
+        let seriesAvailable = character['series']['available'];
+        // fetch100Series(collectionURI, character.id);
+        fetchAllSeries(collectionURI, character.id, seriesAvailable)
     }).catch(error => console.log(error));
 };
