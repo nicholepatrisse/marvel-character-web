@@ -16,6 +16,11 @@ const fetchCharacters = async() => {
     });
 };
 
+const hideInstructions = () => {
+    let chartArea = document.getElementById('instructions');
+    chartArea.classList.add('hidden');
+};
+
 const showErrorMessage = () => {
     errors.innerText = '';
     let errors = document.getElementById('errors');
@@ -28,7 +33,14 @@ const showErrorMessage = () => {
     errors.classList.add('display-errors')
 };
 
+const showLoadingMessage = () => {
+    let loading = document.getElementById('loading');
+    loading.classList.remove('hidden');
+};
+
 const handleClick = e => {
+    hideInstructions();
+    showLoadingMessage();
     fetchCharacter(e.currentTarget.id);
     searchInput.value = '';
     searchResults.innerHTML = "";

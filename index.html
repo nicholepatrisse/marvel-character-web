@@ -11,6 +11,7 @@
 </head>
 <body>
     <header>
+        <div class="title">Marvel Character Web</div>
         <div id="search-bar">
             <input 
                 id="search-input"
@@ -21,6 +22,12 @@
         </div>
     </header>
     <div id="errors"></div>
+    <div id="instructions">
+        Use the search bar above to add characters to the graph and see their connections to each other!
+    </div>
+    <div id="loading" class="hidden">
+        Loading...
+    </div>
     <div class="chart-area">
         <svg id="chart"></svg>
     </div>
