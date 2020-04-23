@@ -47,7 +47,7 @@ function render() {
         .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
     const graphLayout = forceSimulation(graph.nodes)
-        .force('charge', forceManyBody().strength(-2000))
+        .force('charge', forceManyBody().strength(-5000))
         .force('center', forceCenter().x(innerWidth / 2).y(innerHeight / 2))
         .force('forceX', forceX().strength(1).x(innerWidth / 2))
         .force('forceY', forceY().strength(1).y(innerHeight / 2))
@@ -61,7 +61,7 @@ function render() {
     const characterRadius = d => d.type === 'character' ? d.series.available : 1;
     const rScale = scaleLinear()
         .domain([1, max(graph.nodes, d => characterRadius(d))])
-        .range([5, 50]);
+        .range([5, 25]);
     const sizeBubble = d => {
         let size = 5;
         if (d.type === 'character') size = rScale(characterRadius(d));
@@ -166,6 +166,11 @@ const fetch100Series = async(collectionURI, characterId) => {
     });
 };
 
+const clearLoadingMessage = () => {
+    let loading = document.getElementById('loading');
+    loading.classList.add('hidden');
+};
+
 const fetchAllSeries = (collectionURI, characterId, seriesAvailable) => {
     let offset = 0;
     let allSeries = [];
@@ -173,7 +178,10 @@ const fetchAllSeries = (collectionURI, characterId, seriesAvailable) => {
         allSeries.push(fetch100Series(collectionURI, characterId))
         offset += 100
     }
-    Promise.all(allSeries).then(() => render())
+    Promise.all(allSeries).then(() => {
+        clearLoadingMessage()
+        render()
+    });
 };
 
 export const fetchCharacter = async (resourceURI) => {
