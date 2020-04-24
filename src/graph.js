@@ -68,6 +68,10 @@ function render() {
         return size;
     };
 
+    const labelDistScale = scaleLinear()
+        .domain([1, max(graph.nodes, d => characterRadius(d))])
+        .range([7, 27]);
+
     const colorId = d => d.type === 'character' ? d.id : 1;
     const colorScale = scaleOrdinal(schemeCategory10);
 
@@ -81,19 +85,25 @@ function render() {
     const node = container.append('g')
         .attr('class', 'nodes')
         .selectAll('.node').data(graph.nodes)
-        .enter().append('g')
-        .attr('class', 'node')
-
-    node.append('circle')
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y)
-        .attr('r', d => sizeBubble(d))
-        .attr('fill', d => colorScale(colorId(d)))
-
-    node.append('text')
-        .text(d => d.name)
-        .attr('x', d => d.x)
-        .attr('y', d => d.y)
+        .join("g")
+        .call((g) =>
+            g
+                .append("circle")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 1)
+                .attr("r", d => sizeBubble(d))
+                .attr("fill", d => colorScale(colorId(d)))
+        )
+        .call((g) =>
+            g
+                .append("text")
+                .attr("font-family", "'Roboto', sans-serif")
+                .attr("font-size", 12)
+                .attr("x", d => labelDistScale(characterRadius(d)))
+                .attr("dy", "0.35em")
+                .attr("fill", d => colorScale(colorId(d)))
+                .text((d) => d.name)
+        )
 
     graphLayout.on('tick', d => {
         node.call(updateNode);
