@@ -22,8 +22,8 @@ const hideInstructions = () => {
 };
 
 const showErrorMessage = () => {
-    errors.innerText = '';
     let errors = document.getElementById('errors');
+    errors.innerText = '';
     let gif = document.createElement('img');
     gif.src = 'https://media1.giphy.com/media/M9TuBZs3LIQz6/giphy.gif?cid=ecf05e47f347ee95b4ed2e0246bc780fc82d4932e9dd7c55&rid=giphy.gif'
     errors.appendChild(gif)
