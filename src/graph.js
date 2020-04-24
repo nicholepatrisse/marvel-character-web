@@ -47,7 +47,7 @@ function render() {
         .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
     const graphLayout = forceSimulation(graph.nodes)
-        .force('charge', forceManyBody().strength(-5000))
+        .force('charge', forceManyBody().strength(-1000))
         .force('center', forceCenter().x(innerWidth / 2).y(innerHeight / 2))
         .force('forceX', forceX().strength(1).x(innerWidth / 2))
         .force('forceY', forceY().strength(1).y(innerHeight / 2))
@@ -68,6 +68,10 @@ function render() {
         return size;
     };
 
+    const labelDistScale = scaleLinear()
+        .domain([1, max(graph.nodes, d => characterRadius(d))])
+        .range([7, 27]);
+
     const colorId = d => d.type === 'character' ? d.id : 1;
     const colorScale = scaleOrdinal(schemeCategory10);
 
@@ -80,12 +84,26 @@ function render() {
 
     const node = container.append('g')
         .attr('class', 'nodes')
-        .selectAll('circle').data(graph.nodes)
-            .enter().append('circle')
-            .attr('cx', d => d.x)
-            .attr('cy', d => d.y)
-            .attr('r', d => sizeBubble(d))
-            .attr('fill', d => colorScale(colorId(d)))
+        .selectAll('.node').data(graph.nodes)
+        .join("g")
+        .call((g) =>
+            g
+                .append("circle")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 1)
+                .attr("r", d => sizeBubble(d))
+                .attr("fill", d => colorScale(colorId(d)))
+        )
+        .call((g) =>
+            g
+                .append("text")
+                .attr("font-family", "'Roboto', sans-serif")
+                .attr("font-size", 12)
+                .attr("x", d => labelDistScale(characterRadius(d)))
+                .attr("dy", "0.35em")
+                .attr("fill", d => colorScale(colorId(d)))
+                .text((d) => d.name)
+        )
 
     graphLayout.on('tick', d => {
         node.call(updateNode);
@@ -94,13 +112,14 @@ function render() {
     graphLayout.restart();
 
     const fixna = x => {
-        if (isFinite(x)) return x;
+        if (isFinite(x)) return Math.floor(x);
         return 0;
     }
 
     const updateNode = node => {
-        node.attr('cx', d => fixna(d.x))
-        node.attr('cy', d => fixna(d.y))
+        node.attr("transform", function (d) {
+            return "translate(" + fixna(d.x) + "," + fixna(d.y) + ")";
+        })
     };
 
     const updateLink = link => {
