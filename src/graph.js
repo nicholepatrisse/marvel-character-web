@@ -47,13 +47,13 @@ function render() {
         .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
     const graphLayout = forceSimulation(graph.nodes)
-        .force('charge', forceManyBody().strength(-1000))
+        .force('charge', forceManyBody().strength(-2000))
         .force('center', forceCenter().x(innerWidth / 2).y(innerHeight / 2))
         .force('forceX', forceX().strength(1).x(innerWidth / 2))
         .force('forceY', forceY().strength(1).y(innerHeight / 2))
         .force('link', forceLink(graph.links)
             .id(d => d.id)
-            .distance(100)
+            .distance(200)
             .strength(1)
         );
     graphLayout.stop()
